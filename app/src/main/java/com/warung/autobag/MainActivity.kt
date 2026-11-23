@@ -2415,12 +2415,16 @@ class MainActivity : Activity() {
         if (battleModeEnabled) {
             detection = buildBattleDetectionFromCache(parsed, imageWidth, imageHeight)
             if (detection.detections.isEmpty() && detection.notFoundItems.isNotEmpty()) {
-                // Cache belum lengkap - lakukan full-screen scan untuk mengisi cache
+                // Cache belum lengkap - isi dari OCR layar penuh yang sama, lalu coba lagi
+                // dalam pemanggilan ini agar pesanan diproses segera tanpa menunggu frame berikutnya.
                 rememberProductLocationCache(result, imageWidth, imageHeight, force = true)
-                executionStatusText.text =
-                    "MODE BATTLE: Cache lokasi rak belum lengkap. Melakukan pemindaian ulang untuk mengisi cache."
-                scheduleContinuousMonitor(BATTLE_IDLE_RETRY_MS)
-                return
+                detection = buildBattleDetectionFromCache(parsed, imageWidth, imageHeight)
+                if (detection.detections.isEmpty() && detection.notFoundItems.isNotEmpty()) {
+                    executionStatusText.text =
+                        "MODE BATTLE: Cache lokasi rak belum lengkap. Menunggu pemindaian full-screen berikutnya."
+                    scheduleContinuousMonitor(BATTLE_IDLE_RETRY_MS)
+                    return
+                }
             }
         } else {
             detection = precomputedDetection ?: SmartItemDetector.detect(

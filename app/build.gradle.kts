@@ -44,6 +44,17 @@ android {
             }
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
+    sourceSets {
+        // Tes regresi berada di direktori tests/ di tingkat root.
+        val testSourceSet by getting {
+            kotlin.srcDir("tests")
+        }
+    }
 }
 
 dependencies {
@@ -52,4 +63,7 @@ dependencies {
     // Bundled Latin OCR model
     implementation("com.google.mlkit:text-recognition:16.0.1")
 
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
 }
+
