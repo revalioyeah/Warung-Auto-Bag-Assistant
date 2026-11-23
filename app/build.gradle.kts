@@ -46,12 +46,14 @@ android {
     }
 
     testOptions {
-        unitTests.includeAndroidResources = true
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 
     sourceSets {
         // Tes regresi berada di direktori tests/ di tingkat root.
-        val testSourceSet by getting {
+        getByName("test") {
             kotlin.srcDir("tests")
         }
     }
