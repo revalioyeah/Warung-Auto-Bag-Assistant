@@ -87,7 +87,6 @@ class MainActivity : Activity() {
         // "Mulai" terpisah — switch ON langsung memulai pemantauan OCR dan tap.
         private const val BATTLE_POLL_INTERVAL_MS = 180L
         private const val BATTLE_IDLE_RETRY_MS = 100L
-        private const val BATTLE_STABLE_FRAME_COUNT = 2
     }
 
     private lateinit var accessibilityStatusText: TextView
