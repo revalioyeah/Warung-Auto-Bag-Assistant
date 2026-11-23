@@ -434,7 +434,7 @@ class MainActivity : Activity() {
         warungTab.setOnClickListener { selectTab(0) }
         miniGamesTab.setOnClickListener { selectTab(1) }
         battleTab.setOnClickListener { selectTab(2) }
-        selectTab(savedInstanceState?.getInt(SELECTED_TAB_KEY, 0))
+        selectTab(savedInstanceState?.getInt(SELECTED_TAB_KEY, 0) ?: 0)
 
         val orders = sectionCard()
         orders.addView(automationHeading, marginParams(4))
