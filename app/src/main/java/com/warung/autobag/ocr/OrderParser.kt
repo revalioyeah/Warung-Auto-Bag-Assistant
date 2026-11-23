@@ -268,7 +268,7 @@ object OrderParser {
                 val currentText = normalizeDigits(match.groupValues[1])
                 val current = currentText.toIntOrNull() ?: 0
 
-                val requiredText = normalizeDigits(match.groupValues[2])
+                val requiredText = normalizeDenominatorDigits(match.groupValues[2])
                 val required = requiredText.toIntOrNull()
 
                 // Pembilang boleh tidak terbaca OCR.
@@ -746,6 +746,25 @@ object OrderParser {
             .replace('7', '1', ignoreCase = true)
             .replace('z', '2', ignoreCase = true)
             .replace('s', '5', ignoreCase = true)
+            .replace('g', '6', ignoreCase = true)
+            .replace('b', '8', ignoreCase = true)
+    }
+
+    private fun normalizeDenominatorDigits(text: String): String {
+        return text
+            .replace('o', '0', ignoreCase = true)
+            .replace('q', '0', ignoreCase = true)
+            .replace('d', '0', ignoreCase = true)
+            .replace('?', '0', ignoreCase = true)
+            .replace('a', '0', ignoreCase = true)
+            .replace('i', '1', ignoreCase = true)
+            .replace('l', '1', ignoreCase = true)
+            .replace('|', '1', ignoreCase = true)
+            .replace('I', '1', ignoreCase = true)
+            .replace('t', '1', ignoreCase = true)
+            .replace('f', '1', ignoreCase = true)
+            .replace('7', '1', ignoreCase = true)
+            .replace('z', '2', ignoreCase = true)
             .replace('g', '6', ignoreCase = true)
             .replace('b', '8', ignoreCase = true)
     }
