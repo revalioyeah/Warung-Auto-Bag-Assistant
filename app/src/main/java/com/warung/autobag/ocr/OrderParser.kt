@@ -43,7 +43,7 @@ data class OrderParseResult(
 object OrderParser {
 
     private val quantityPattern = Regex(
-        """(?i)(?<!\d)([0-9oOlIQDbgSz]{0,3})\s*[/|!Il1tfl7]\s*([0-9IlQDbgSz]{1,3})(?!\d)"""
+        """(?i)(?<!\d)([0-9oOlIQDbgSz]{0,3})\s*[/|!Il1tfl7]\s*([0-9IlQDbgSz]{1,2})(?!\d)"""
     )
 
     // Padding mengikuti lebar tulisan PESANAN agar tetap proporsional
@@ -266,12 +266,7 @@ object OrderParser {
                 // OCR terkadang membaca angka 0 sebagai huruf O.
                 // Jumlah berjalan juga dapat berupa 1, 2, dan seterusnya.
                 val currentText = normalizeDigits(match.groupValues[1])
-
-                val current = currentText.toIntOrNull()
-                    // OCR kadang menghilangkan pembilang (membaca "/5" bukan "0/5").
-                    // Pembilang yang tidak terbaca dianggap 0 agar pesanan tetap bisa
-                    // diproses; papan pesanan biasanya mulai dari 0.
-                    ?: 0
+                val current = currentText.toIntOrNull() ?: 0
 
                 val requiredText = normalizeDigits(match.groupValues[2])
                 val required = requiredText.toIntOrNull()
