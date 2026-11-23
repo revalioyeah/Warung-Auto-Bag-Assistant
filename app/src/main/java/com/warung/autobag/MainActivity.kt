@@ -65,7 +65,7 @@ import com.warung.autobag.minigame.NpcVision
 class MainActivity : Activity() {
 
     companion object {
-        private const val MINI_GAMES_TAB = "mini_games_tab"
+        private const val SELECTED_TAB_KEY = "selected_tab"
         private const val ACCESSIBILITY_SETUP_SHOWN = "accessibility_setup_shown"
         private const val REQUEST_SCREEN_CAPTURE = 3101
         private const val REQUEST_POST_NOTIFICATIONS = 3102
@@ -156,7 +156,7 @@ class MainActivity : Activity() {
     private lateinit var fishingStatus: TextView
     private lateinit var fishingSwitch: Switch
     private var syncingFishingSwitch = false
-    private var miniGamesTabSelected = false
+    private var selectedTabIndex = 0 // 0 Warung, 1 Mini Game, 2 Battle
 
     private class FishingSession(
         var lastFrame: Long,
@@ -400,28 +400,42 @@ class MainActivity : Activity() {
         setup.addView(controlRow(startButton, stopButton), marginParams())
         page.addView(setup, marginParams(14))
 
+        val tabRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         val warungTab = Button(this).apply { text = "Warung" }
         val miniGamesTab = Button(this).apply { text = "Mini Game" }
-        page.addView(controlRow(warungTab, miniGamesTab), marginParams(10))
+        val battleTab = Button(this).apply { text = "Battle" }
+        tabRow.addView(warungTab, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+        tabRow.addView(miniGamesTab, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = dp(6) })
+        tabRow.addView(battleTab, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply { leftMargin = dp(6) })
+        page.addView(tabRow, marginParams(10))
 
         val warungPage = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         val miniGamesPage = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val battlePage = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         page.addView(warungPage, marginParams())
         page.addView(miniGamesPage, marginParams())
+        page.addView(battlePage, marginParams())
 
-        fun selectTab(showMiniGames: Boolean) {
-            miniGamesTabSelected = showMiniGames
-            warungPage.visibility = if (showMiniGames) View.GONE else View.VISIBLE
-            miniGamesPage.visibility = if (showMiniGames) View.VISIBLE else View.GONE
-            styleControl(warungTab, primary = !showMiniGames)
-            styleControl(miniGamesTab, primary = showMiniGames)
-            warungTab.isSelected = !showMiniGames
-            miniGamesTab.isSelected = showMiniGames
+        fun selectTab(index: Int) {
+            selectedTabIndex = index
+            val warung = index == 0
+            val miniGames = index == 1
+            val battle = index == 2
+            warungPage.visibility = if (warung) View.VISIBLE else View.GONE
+            miniGamesPage.visibility = if (miniGames) View.VISIBLE else View.GONE
+            battlePage.visibility = if (battle) View.VISIBLE else View.GONE
+            styleControl(warungTab, primary = warung)
+            styleControl(miniGamesTab, primary = miniGames)
+            styleControl(battleTab, primary = battle)
+            warungTab.isSelected = warung
+            miniGamesTab.isSelected = miniGames
+            battleTab.isSelected = battle
         }
 
-        warungTab.setOnClickListener { selectTab(false) }
-        miniGamesTab.setOnClickListener { selectTab(true) }
-        selectTab(savedInstanceState?.getBoolean(MINI_GAMES_TAB) ?: false)
+        warungTab.setOnClickListener { selectTab(0) }
+        miniGamesTab.setOnClickListener { selectTab(1) }
+        battleTab.setOnClickListener { selectTab(2) }
+        selectTab(savedInstanceState?.getInt(SELECTED_TAB_KEY, 0))
 
         val orders = sectionCard()
         orders.addView(automationHeading, marginParams(4))
@@ -432,6 +446,9 @@ class MainActivity : Activity() {
         ).apply { bottomMargin = dp(6) })
         orders.addView(calibrationCheckBox, marginParams(8))
         orders.addView(startAutomaticButton, marginParams(4))
+
+        orders.addView(controlRow(pauseAutomaticButton, resumeAutomaticButton, stopAutomaticButton), marginParams())
+        warungPage.addView(orders, marginParams(10))
 
         battleModeContainer = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -528,10 +545,7 @@ class MainActivity : Activity() {
         }
         battleModeContainer.addView(battleModeText)
         battleModeContainer.addView(battleModeSwitch)
-        orders.addView(battleModeContainer, marginParams(4))
-
-        orders.addView(controlRow(pauseAutomaticButton, resumeAutomaticButton, stopAutomaticButton), marginParams())
-        warungPage.addView(orders, marginParams(10))
+        battlePage.addView(battleModeContainer, marginParams(4))
 
         val details = sectionCard().apply { visibility = View.GONE }
         val detailsButton = Button(this).apply {
@@ -604,7 +618,7 @@ class MainActivity : Activity() {
 
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(MINI_GAMES_TAB, miniGamesTabSelected)
+        outState.putInt(SELECTED_TAB_KEY, selectedTabIndex)
         super.onSaveInstanceState(outState)
     }
 
