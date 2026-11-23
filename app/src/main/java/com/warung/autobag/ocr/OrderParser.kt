@@ -268,6 +268,10 @@ object OrderParser {
                 val currentText = normalizeDigits(match.groupValues[1])
 
                 val current = currentText.toIntOrNull()
+                    // OCR kadang menghilangkan pembilang (membaca "/5" bukan "0/5").
+                    // Pembilang yang tidak terbaca dianggap 0 agar pesanan tetap bisa
+                    // diproses; papan pesanan biasanya mulai dari 0.
+                    ?: 0
 
                 val requiredText = normalizeDigits(match.groupValues[2])
                 val required = requiredText.toIntOrNull()
