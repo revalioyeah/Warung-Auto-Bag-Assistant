@@ -78,7 +78,7 @@ class MainActivity : Activity() {
         private const val GAME_SWITCH_DELAY_MS = 1_500L
         private const val CONTINUOUS_MONITOR_INTERVAL_MS = 90L
         private const val CONTINUOUS_IDLE_RETRY_MS = 100L
-        private const val CONTINUOUS_STABLE_FRAME_COUNT = 2
+        private const val CONTINUOUS_STABLE_FRAME_COUNT = 1
         private const val MAX_CONTINUOUS_PANEL_WAIT_ATTEMPTS = 8
         private const val CONTINUOUS_PANEL_RETRY_DELAY_MS = 120L
         private const val PRODUCT_LOCATION_CACHE_TTL_MS = 3 * 60 * 1000L
@@ -1794,8 +1794,9 @@ class MainActivity : Activity() {
 
         // Fast-start a new order on its first complete OCR frame. The
         // coordinates are still validated by buildTasksFromSnapshot before
-        // any tap is dispatched. Keep the two-frame guard for an unchanged
-        // panel so a completed customer's order is never replayed.
+        // any tap is dispatched. The stability guard now only applies to an
+        // unchanged active customer panel, so a fresh customer still starts
+        // on its first frame instead of waiting for two identical reads.
         val completeNewOrder =
             parsed.items.isNotEmpty() &&
                 parsed.unmatchedQuantityCount == 0 &&
