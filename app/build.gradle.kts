@@ -54,7 +54,7 @@ android {
     sourceSets {
         // Tes regresi berada di direktori tests/ di tingkat root.
         getByName("test") {
-            kotlin.srcDir("tests")
+            kotlin.srcDir(rootProject.file("tests"))
         }
     }
 }
