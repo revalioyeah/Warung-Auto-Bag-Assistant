@@ -43,7 +43,7 @@ data class OrderParseResult(
 object OrderParser {
 
     private val quantityPattern = Regex(
-        """(?i)(?<!\d)([0-9oOlI]{0,2})\s*[/|!Il]\s*([0-9Il]{1,2})(?!\d)"""
+        """(?i)(?<!\d)([0-9oOlIQDbgSz]{0,3})\s*[/|!Il1tfl7]\s*([0-9IlQDbgSz]{1,3})(?!\d)"""
     )
 
     // Padding mengikuti lebar tulisan PESANAN agar tetap proporsional
@@ -265,16 +265,11 @@ object OrderParser {
 
                 // OCR terkadang membaca angka 0 sebagai huruf O.
                 // Jumlah berjalan juga dapat berupa 1, 2, dan seterusnya.
-                val currentText = match.groupValues[1]
-                    .replace('o', '0', ignoreCase = true)
-                    .replace('i', '1', ignoreCase = true)
-                    .replace('l', '1', ignoreCase = true)
+                val currentText = normalizeDigits(match.groupValues[1])
 
                 val current = currentText.toIntOrNull()
 
-                val requiredText = match.groupValues[2]
-                    .replace('i', '1', ignoreCase = true)
-                    .replace('l', '1', ignoreCase = true)
+                val requiredText = normalizeDigits(match.groupValues[2])
                 val required = requiredText.toIntOrNull()
 
                 // Pembilang boleh tidak terbaca OCR.
@@ -731,6 +726,29 @@ object OrderParser {
         }
 
         return assignments
+    }
+
+    /**
+     * Normalisasi karakter yang sering dibaca OCR sebagai angka.
+     */
+    private fun normalizeDigits(text: String): String {
+        return text
+            .replace('o', '0', ignoreCase = true)
+            .replace('q', '0', ignoreCase = true)
+            .replace('d', '0', ignoreCase = true)
+            .replace('?', '0', ignoreCase = true)
+            .replace('a', '0', ignoreCase = true)
+            .replace('i', '1', ignoreCase = true)
+            .replace('l', '1', ignoreCase = true)
+            .replace('|', '1', ignoreCase = true)
+            .replace('I', '1', ignoreCase = true)
+            .replace('t', '1', ignoreCase = true)
+            .replace('f', '1', ignoreCase = true)
+            .replace('7', '1', ignoreCase = true)
+            .replace('z', '2', ignoreCase = true)
+            .replace('s', '5', ignoreCase = true)
+            .replace('g', '6', ignoreCase = true)
+            .replace('b', '8', ignoreCase = true)
     }
 
     /**
