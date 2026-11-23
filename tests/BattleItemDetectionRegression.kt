@@ -35,8 +35,8 @@ fun main() {
     )
     expect(kopiSusuDetection.detections.size == 1, "Battle: Kopi susu detected with typo")
     val ksTarget = kopiSusuDetection.detections.first()
-    expect(ksTarget.item.name == "Kopi susu", "Battle: Kopi susu canonical name correct")
-    expect(ksTarget.shelfRegion == ShelfRegion.RIGHT_SHELF, "Battle: Kopi susu right shelf region correct")
+    expect(ksTarget.itemName == "Kopi susu", "Battle: Kopi susu canonical name correct")
+    expect(ksTarget.shelfRegion == "RIGHT_SHELF", "Battle: Kopi susu right shelf region correct")
     expect(ksTarget.targetX / imageWidth.toFloat() in 0.5f..0.98f, "Battle: Kopi susu target X in right shelf region")
 
     // Test case 2: "Mie rebus" - Left Shelf
@@ -58,8 +58,8 @@ fun main() {
     )
     expect(mieRebusDetection.detections.size == 1, "Battle: Mie rebus detected with typo")
     val mrTarget = mieRebusDetection.detections.first()
-    expect(mrTarget.item.name == "Mie rebus", "Battle: Mie rebus canonical name correct")
-    expect(mrTarget.shelfRegion == ShelfRegion.LEFT_SHELF, "Battle: Mie rebus left shelf region correct")
+    expect(mrTarget.itemName == "Mie rebus", "Battle: Mie rebus canonical name correct")
+    expect(mrTarget.shelfRegion == "LEFT_SHELF", "Battle: Mie rebus left shelf region correct")
     expect(mrTarget.targetX / imageWidth.toFloat() in 0.02f..0.45f, "Battle: Mie rebus target X in left shelf region")
 
     // Test case 3: "Teh celup" - Left Shelf, out of bounds
